@@ -47,30 +47,26 @@ public class WordCount
         }
     }
 
-    public static class ReducerClass extends Reducer<PairAsKey,IntWritable, PairAsKey,IntWritable>
+    public static class ReducerClass extends Reducer<PairAsKey,IntWritable, PairAsKey,FloatWritable>
     {
         private static float den=0;
 
         @Override
         public void reduce(PairAsKey key, Iterable<IntWritable> values, Context context) throws IOException,  InterruptedException
         {
-            float sum = 0;
+            int sum = 0;
             float res = 0;
-            for (IntWritable value : values)
-            {
+            for (IntWritable value : values) {
                 sum = sum + value.get();
             }
             Text w2 = key.getW2();
-            if (w2.toString().equals("*"))
-            {
+            if (w2.toString().equals("*")) {
                 den = sum;
             }
-            else
-            {
-//                System.out.println("sum:" + sum + " den:" + den + " " + key);
-                res = (float) sum / den;
-                System.out.println("res:" + res);
-                context.write(key, new IntWritable((int)res));
+            else {
+                res = (float) (sum / den);
+                System.out.println("res:" + res + " den:" + den + " " + key);
+                context.write(key, new FloatWritable(res));
             }
         }
     }
@@ -89,15 +85,22 @@ public class WordCount
     {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
+
         job.setJarByClass(WordCount.class);
+
+        // Mapper
         job.setMapperClass(MapperClass.class);
-        job.setPartitionerClass(PartitionerClass.class);
-        job.setCombinerClass(ReducerClass.class);
-        job.setReducerClass(ReducerClass.class);
         job.setMapOutputKeyClass(PairAsKey.class);
         job.setMapOutputValueClass(IntWritable.class);
+
+
+        job.setPartitionerClass(PartitionerClass.class);
+
+        // Reducer
+        job.setReducerClass(ReducerClass.class);
         job.setOutputKeyClass(PairAsKey.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(FloatWritable.class);
+
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
