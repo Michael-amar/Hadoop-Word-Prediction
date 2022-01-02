@@ -2,3 +2,5 @@
 .idea
 out
 Hadoop-Word-Prediction.iml
+heb-gram
+src/META-INF/MANIFEST.MF

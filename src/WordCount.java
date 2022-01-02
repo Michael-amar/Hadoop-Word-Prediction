@@ -54,6 +54,7 @@ public class WordCount
         @Override
         public void reduce(PairAsKey key, Iterable<IntWritable> values, Context context) throws IOException,  InterruptedException
         {
+            System.out.println(key.toString());
             int sum = 0;
             float res = 0;
             for (IntWritable value : values) {
