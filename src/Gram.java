@@ -49,6 +49,18 @@ public class Gram implements WritableComparable, Writable
         return new Gram(new Text(threeGramString),new Text(w1),new Text(w2), new Text(w3));
     }
 
+    // built in String.compareTo puts some characters like: !,#,% before *
+    // this function treats * as first character in the dictionary
+    public int CostumeStringCompareTo(String this_, String other){
+        if (this_.equals(other))
+            return 0;
+        if (this_.equals("*"))
+            return -1;
+        if(other.equals("*"))
+            return 1;
+        return this_.compareTo(other);
+    }
+
     @Override
     public int compareTo(Object o)
     {
@@ -74,27 +86,27 @@ public class Gram implements WritableComparable, Writable
 
         // this and other are 1-grams
         if (this.tag.toString().equals(oneGramString))
-            return this.w1.toString().compareTo(other.w1.toString());
+            return CostumeStringCompareTo(this.w1.toString(), other.w1.toString());
 
         // this and other are 2-grams
         if(this.tag.toString().equals(twoGramString))
             if (this.w1.toString().equals(other.w1.toString()))
-                return this.w2.toString().compareTo(other.w2.toString());
+                return CostumeStringCompareTo(this.w2.toString(), other.w2.toString());
             else
-                return this.w1.toString().compareTo(other.w1.toString());
+                return CostumeStringCompareTo(this.w1.toString(), other.w1.toString());
 
         // this and other are 3-grams
         // first sort by w1
         if (this.w1.toString().compareTo(other.w1.toString()) != 0)
-            return this.w1.toString().compareTo(other.w1.toString());
+            return CostumeStringCompareTo(this.w1.toString(), other.w1.toString());
 
         // then by w2
         if (this.w2.toString().compareTo(other.w2.toString()) != 0)
-            return this.w2.toString().compareTo(other.w2.toString());
+            return CostumeStringCompareTo(this.w2.toString(), other.w2.toString());
 
         // then by w3
         if (this.w3.toString().compareTo(other.w3.toString()) != 0)
-            return this.w3.toString().compareTo(other.w3.toString());
+            return CostumeStringCompareTo(this.w3.toString(), other.w3.toString());
 
         return 0;
     }

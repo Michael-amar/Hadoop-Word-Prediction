@@ -54,7 +54,7 @@ public class Step2
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "one grams count");
+        Job job = Job.getInstance(conf, "Step2");
 
         job.setJarByClass(Step2.class);
 
@@ -71,7 +71,7 @@ public class Step2
         job.setOutputKeyClass(Gram.class);
         job.setOutputValueClass(IntWritable.class);
 
-        job.getConfiguration().set("mapreduce.output.basename", "1-grams_count");
+        job.getConfiguration().set("mapreduce.output.basename", "Step2");
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));

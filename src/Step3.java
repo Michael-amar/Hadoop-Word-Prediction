@@ -65,7 +65,7 @@ public class Step3
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "2-grams Value2Key-a");
+        Job job = Job.getInstance(conf, "Step3");
 
         job.setJarByClass(Step3.class);
 
@@ -83,7 +83,7 @@ public class Step3
         job.setOutputValueClass(DoubleWritable.class);
 
         // renaming output file
-        job.getConfiguration().set("mapreduce.output.basename", "addends");
+        job.getConfiguration().set("mapreduce.output.basename", "Step3");
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);

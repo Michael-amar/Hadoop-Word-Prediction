@@ -56,7 +56,7 @@ public class Step1
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "three grams count");
+        Job job = Job.getInstance(conf, "Step1");
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setJarByClass(Step1.class);
 
@@ -74,7 +74,7 @@ public class Step1
         job.setOutputValueClass(IntWritable.class);
 
         // renaming output file
-        job.getConfiguration().set("mapreduce.output.basename", "3-grams_count");
+        job.getConfiguration().set("mapreduce.output.basename", "Step1");
         SequenceFileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);

@@ -61,7 +61,7 @@ public class Step5
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "final result!");
+        Job job = Job.getInstance(conf, "Step5");
 
         job.setJarByClass(Step5.class);
 
@@ -80,7 +80,7 @@ public class Step5
 
 
         // renaming output file
-        job.getConfiguration().set("mapreduce.output.basename", "final result!");
+        job.getConfiguration().set("mapreduce.output.basename", "Step5");
 
         FileInputFormat.setInputPaths(job, new Path(args[0]), new Path(args[1]));
         FileOutputFormat.setOutputPath(job, new Path(args[2]));

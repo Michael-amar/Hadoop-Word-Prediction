@@ -42,7 +42,7 @@ public class Step4
             RemoteIterator<LocatedFileStatus> it=fileSystem.listFiles(new Path("/Step2"),false);
             while(it.hasNext()){
                 LocatedFileStatus fileStatus=it.next();
-                if (fileStatus.getPath().getName().startsWith("1-grams_count")){
+                if (fileStatus.getPath().getName().startsWith("Step2")){
                     FSDataInputStream InputStream = fileSystem.open(fileStatus.getPath());
                     BufferedReader reader = new BufferedReader(new InputStreamReader(InputStream, "UTF-8"));
                     String line=null;
@@ -96,7 +96,7 @@ public class Step4
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "2-grams Value2Key-b");
+        Job job = Job.getInstance(conf, "Step4");
 
         job.setJarByClass(Step4.class);
 
@@ -114,7 +114,7 @@ public class Step4
         job.setOutputValueClass(DoubleWritable.class);
 
         // renaming output file
-        job.getConfiguration().set("mapreduce.output.basename", "addends");
+        job.getConfiguration().set("mapreduce.output.basename", "Step4");
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
