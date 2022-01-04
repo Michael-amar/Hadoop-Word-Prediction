@@ -13,9 +13,9 @@ public class Gram implements WritableComparable, Writable
     private Text w1;
     private Text w2;
     private Text w3;
-    private static final String oneGram="one-gram";
-    private static final String twoGram="two-gram";
-    private static final String threeGram="three-gram";
+    public static final String oneGramString="one-gram";
+    public  static final String twoGramString="two-gram";
+    public static final String threeGramString="three-gram";
     private Gram(Text tag,Text w1, Text w2, Text w3){
         this.tag = tag;
         this.w1 = w1;
@@ -29,16 +29,24 @@ public class Gram implements WritableComparable, Writable
         w2 = new Text("");
         w3 = new Text("");
     }
+
     public static Gram oneGram(Text w1){
-        return new Gram(new Text(oneGram),w1, new Text(""), new Text(""));
+        return new Gram(new Text(oneGramString),w1, new Text(""), new Text(""));
+    }
+    public static Gram oneGram(String w1){
+        return new Gram(new Text(oneGramString),new Text(w1), new Text(""), new Text(""));
     }
 
     public static Gram twoGram(Text w1,Text w2){
-        return new Gram(new Text(twoGram),w1, w2, new Text(""));
+        return new Gram(new Text(twoGramString),w1, w2, new Text(""));
     }
 
-    public static Gram threeGram(Text w1,Text w2, Text w3){
-        return new Gram(new Text("three-gram"),w1, w2, w3);
+    public static Gram twoGram(String w1,String w2){
+        return new Gram(new Text(twoGramString),new Text(w1), new Text(w2), new Text(""));
+    }
+
+    public static Gram threeGram(String w1,String w2,String w3){
+        return new Gram(new Text(threeGramString),new Text(w1),new Text(w2), new Text(w3));
     }
 
     @Override
@@ -46,28 +54,30 @@ public class Gram implements WritableComparable, Writable
     {
         Gram other = (Gram) o;
         if (w1.toString().equals(other.w1.toString()) && w2.toString().equals(other.w2.toString()) && w3.toString().equals(other.w3.toString()))
+        {
             return 0;
+        }
 
         // one-gram before the rest
-        if (this.tag.toString().equals(oneGram) && !other.tag.toString().equals(oneGram))
+        if (this.tag.toString().equals(oneGramString) && !other.tag.toString().equals(oneGramString))
             return -1;
-        if (!this.tag.toString().equals(oneGram) && other.tag.toString().equals(oneGram))
+        if (!this.tag.toString().equals(oneGramString) && other.tag.toString().equals(oneGramString))
             return 1;
 
         // two-gram before three gram
-        if (this.tag.toString().equals(twoGram) && other.tag.toString().equals(threeGram))
+        if (this.tag.toString().equals(twoGramString) && other.tag.toString().equals(threeGramString))
             return -1;
-        if (this.tag.toString().equals(threeGram) && other.tag.toString().equals(twoGram))
+        if (this.tag.toString().equals(threeGramString) && other.tag.toString().equals(twoGramString))
             return 1;
 
         // here this.tag == other.tag
 
         // this and other are 1-grams
-        if (this.tag.toString().equals(oneGram))
+        if (this.tag.toString().equals(oneGramString))
             return this.w1.toString().compareTo(other.w1.toString());
 
         // this and other are 2-grams
-        if(this.tag.toString().equals(twoGram))
+        if(this.tag.toString().equals(twoGramString))
             if (this.w1.toString().equals(other.w1.toString()))
                 return this.w2.toString().compareTo(other.w2.toString());
             else
@@ -84,7 +94,7 @@ public class Gram implements WritableComparable, Writable
 
         // then by w3
         if (this.w3.toString().compareTo(other.w3.toString()) != 0)
-            this.w3.toString().compareTo(other.w3.toString());
+            return this.w3.toString().compareTo(other.w3.toString());
 
         return 0;
     }
@@ -116,11 +126,31 @@ public class Gram implements WritableComparable, Writable
         }
         else if (tag.toString().equals("two-gram"))
         {
-            return w1.toString() + ", " + w2.toString();
+            return w1.toString() + " " + w2.toString();
         }
         else {
-            return w1.toString() + ", " + w2.toString() + ", " + w3.toString();
+            return w1.toString() + " " + w2.toString() + " " + w3.toString();
         }
+    }
+
+    public Text getW1()
+    {
+        return w1;
+    }
+
+    public Text getW2()
+    {
+        return w2;
+    }
+
+    public Text getW3()
+    {
+        return w3;
+    }
+
+    public Text getTag()
+    {
+        return tag;
     }
 }
 
