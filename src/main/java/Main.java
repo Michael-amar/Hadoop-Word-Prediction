@@ -20,14 +20,11 @@ public class Main {
     private static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
     private static final String S3_BUCKET_URL = "S3://" + S3_BUCKET_NAME + "/";
     private static final String LOGS = S3_BUCKET_URL + "logs";
+    private static final String _3_GRAM_DATASET = S3_BUCKET_URL + "logs";
     StepFactory stepFactory = new StepFactory();
 
     private static String jarOfStep(int stepNum) {
         return String.format("s3://%s/step%s.jar", S3_BUCKET_NAME, stepNum);
-    }
-
-    private static String ngramDatasetFor(int n) {
-        return String.format("s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/%sgram/data", n);
     }
 
     private static StepConfig getStep(int step) {
@@ -36,7 +33,7 @@ public class Main {
             case 1:
             case 2:
             case 3:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(ngramDatasetFor(step), null);
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(_3_GRAM_DATASET, null);
                 break;
             case 4:
             case 5:
