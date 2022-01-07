@@ -97,7 +97,7 @@ hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step6
                 .build();
 
         JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
-                .withInstanceCount(2)
+                .withInstanceCount(6)
                 .withMasterInstanceType(InstanceType.M4Large.toString())
                 .withSlaveInstanceType(InstanceType.M4Large.toString())
                 .withHadoopVersion("2.6.0")
