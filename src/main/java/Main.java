@@ -17,16 +17,16 @@ public class Main {
 
     private static final Regions REGION = Regions.US_EAST_1;
     private static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
-    private static final String S3_BUCKET_URL = "S3://" + S3_BUCKET_NAME + "/";
+    private static final String S3_BUCKET_URL = "s3n://" + S3_BUCKET_NAME + "/";
     private static final String OUTPUT_FOLDER_NAME = "output";
     private static final String OUTPUT = S3_BUCKET_URL + OUTPUT_FOLDER_NAME;
     private static final String LOGS = S3_BUCKET_URL + "logs";
-    private static final String _3_GRAM_DATASET = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/3gram/data";
+    private static final String _3_GRAM_DATASET = "s3n://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/3gram/data";
     private static final String READ_ONLY_FILE_EXTENSION = "-r-00000";
     StepFactory stepFactory = new StepFactory();
 
     private static String jarOfStep(int stepNum) {
-        return String.format("s3://%s/step%s.jar", S3_BUCKET_NAME, stepNum);
+        return String.format("s3n://%s/step%s.jar", S3_BUCKET_NAME, stepNum);
     }
 
     private static String outputFolderForStep(int step) {
