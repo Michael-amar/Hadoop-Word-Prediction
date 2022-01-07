@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class Step6
 {
-    public static class MapperClass extends Mapper<LongWritable, Text, Costume3Gram, DoubleWritable>
+    public static class MapperClass extends Mapper<LongWritable, Text, Custom3Gram, DoubleWritable>
     {
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException
@@ -23,15 +23,15 @@ public class Step6
             String[] three_gram = fields[0].split(" ");
             DoubleWritable res = new DoubleWritable(Double.parseDouble(fields[1]));
             Gram tri_gram = Gram.threeGram(three_gram[0],three_gram[1],three_gram[2]);
-            context.write(new Costume3Gram(tri_gram,res), res);
+            context.write(new Custom3Gram(tri_gram,res), res);
         }
     }
 
-    public static class ReducerClass extends Reducer<Costume3Gram,DoubleWritable, Gram, DoubleWritable>
+    public static class ReducerClass extends Reducer<Custom3Gram,DoubleWritable, Gram, DoubleWritable>
     {
 
         @Override
-        public void reduce(Costume3Gram key, Iterable<DoubleWritable> values, Context context) throws IOException,  InterruptedException
+        public void reduce(Custom3Gram key, Iterable<DoubleWritable> values, Context context) throws IOException,  InterruptedException
         {
             context.write(key.getThree_gram(), key.getValue());
         }
@@ -55,7 +55,7 @@ public class Step6
 
         // Mapper
         job.setMapperClass(Step6.MapperClass.class);
-        job.setMapOutputKeyClass(Costume3Gram.class);
+        job.setMapOutputKeyClass(Custom3Gram.class);
         job.setMapOutputValueClass(DoubleWritable.class);
 
 

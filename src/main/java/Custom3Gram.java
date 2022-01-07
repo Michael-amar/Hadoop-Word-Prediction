@@ -8,17 +8,17 @@ import java.io.IOException;
 
 // in order to sort by the values we need to use the Value2Key technique
 // this class is for that purpose
-public class Costume3Gram implements WritableComparable, Writable
+public class Custom3Gram implements WritableComparable, Writable
 {
     private Gram three_gram;
     private DoubleWritable value;
 
-    public Costume3Gram(Gram three_gram, DoubleWritable value){
+    public Custom3Gram(Gram three_gram, DoubleWritable value){
         this.three_gram = three_gram;
         this.value = value;
     }
 
-    public Costume3Gram(){
+    public Custom3Gram(){
         this.three_gram = new Gram();
         this.value = new DoubleWritable();
     }
@@ -26,7 +26,7 @@ public class Costume3Gram implements WritableComparable, Writable
     @Override
     public int compareTo(Object o)
     {
-        Costume3Gram other = (Costume3Gram) o;
+        Custom3Gram other = (Custom3Gram) o;
 
         Gram this_w1w2 = Gram.twoGram(three_gram.getW1(), three_gram.getW2());
         Gram other_w1w2 = Gram.twoGram(other.three_gram.getW1(), other.three_gram.getW2());
