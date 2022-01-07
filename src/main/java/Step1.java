@@ -7,7 +7,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
@@ -23,7 +22,7 @@ public class Step1
             String[] fields = value.toString().split("\t");
             String[] three_gram = fields[0].split(" ");
             if (three_gram.length < 3){
-                System.out.println(value.toString());
+                System.out.println(value);
                 return;
             }
             IntWritable count = new IntWritable(Integer.parseInt(fields[2]));
@@ -49,7 +48,7 @@ public class Step1
         @Override
         public int getPartition(Gram key, IntWritable value, int numPartitions)
         {
-            return key.toString().hashCode() % numPartitions;
+            return (key.toString().hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
 

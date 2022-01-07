@@ -10,12 +10,10 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
-
-
 public class Main {
 
     private static final Regions REGION = Regions.US_EAST_1;
-    private static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
+    public static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
     private static final String S3_BUCKET_URL = "s3n://" + S3_BUCKET_NAME + "/";
     private static final String OUTPUT_FOLDER_NAME = "output";
     private static final String FINAL_OUTPUT_FOLDER = S3_BUCKET_URL + OUTPUT_FOLDER_NAME;
@@ -24,16 +22,16 @@ public class Main {
 //    private static final String _3_GRAM_DATASET = "s3n://distributed-systems-assignment-2/3_grams.txt";
     private static final String READ_ONLY_FILE_EXTENSION = "-r-00000";
 
-    private static String jarOfStep(int stepNum) {
+    public static String jarOfStep(int stepNum) {
         return String.format("s3n://%s/step%s.jar", S3_BUCKET_NAME, stepNum);
     }
 
     private static String outputFolderForStep(int step) {
-        return S3_BUCKET_URL + "Step" + step;
+        return "/Step" + step;
     }
 
-    private static String outputFolderName(int step) {
-        return outputFolderForStep(step) + "/Step" + step + READ_ONLY_FILE_EXTENSION;
+    private static String outputFolderNameForStep(int step) {
+        return outputFolderForStep(step) + outputFolderForStep(step) + "-r-00000";
     }
 
     /*
@@ -65,13 +63,13 @@ hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step6
             case 2:
             case 3:
             case 4:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(1), outputFolderForStep(step));
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderNameForStep(1), outputFolderForStep(step));
                 break;
             case 5:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(3), outputFolderName(4), outputFolderForStep(step));
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderNameForStep(3), outputFolderNameForStep(4), outputFolderForStep(step));
                 break;
             case 6:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(5), FINAL_OUTPUT_FOLDER);
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderNameForStep(5), FINAL_OUTPUT_FOLDER);
                 break;
         }
 
@@ -116,6 +114,6 @@ hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step6
 
         RunJobFlowResult result = emr.runJobFlow(runFlowRequest);
         String id = result.getJobFlowId();
-        System.out.println("our cluster id: "+id);
+        System.out.println("our cluster id: " + id);
     }
 }

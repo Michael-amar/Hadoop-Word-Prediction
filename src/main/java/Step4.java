@@ -14,6 +14,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Step4
@@ -51,12 +53,12 @@ public class Step4
         /* This function was taken from stack overflow*/
         public void setup(Reducer.Context context) throws IOException {
             FileSystem fileSystem = FileSystem.get(context.getConfiguration());
-            RemoteIterator<LocatedFileStatus> it=fileSystem.listFiles(new Path("/Step2"),false);
+            RemoteIterator<LocatedFileStatus> it = fileSystem.listFiles(new Path("/Step2"),false);
             while(it.hasNext()){
-                LocatedFileStatus fileStatus=it.next();
+                LocatedFileStatus fileStatus = it.next();
                 if (fileStatus.getPath().getName().startsWith("Step2")){
                     FSDataInputStream InputStream = fileSystem.open(fileStatus.getPath());
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(InputStream, "UTF-8"));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(InputStream, StandardCharsets.UTF_8));
                     String line=null;
                     while ((line = reader.readLine()) != null)
                     {
@@ -101,7 +103,7 @@ public class Step4
         @Override
         public int getPartition(CombinedKey key, IntWritable value, int numPartitions)
         {
-            return (key.getKey1().toString() + key.getKey2().toString()).hashCode() % numPartitions;
+            return ((key.getKey1().toString() + key.getKey2().toString()).hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
 

@@ -10,7 +10,7 @@ public class CombinedKey implements WritableComparable, Writable
 {
     private Text key1;
     private Text key2;
-    private Gram gram;
+    private final Gram gram;
 
     public CombinedKey(){
         key1 = new Text("");

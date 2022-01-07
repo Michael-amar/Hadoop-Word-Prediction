@@ -66,7 +66,7 @@ public class Step5
         @Override
         public int getPartition(Gram key, DoubleWritable value, int numPartitions)
         {
-            return key.toString().hashCode() % numPartitions;
+            return (key.toString().hashCode() & Integer.MAX_VALUE) % numPartitions;
         }
     }
 

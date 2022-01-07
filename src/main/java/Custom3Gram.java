@@ -10,7 +10,7 @@ import java.io.IOException;
 // this class is for that purpose
 public class Custom3Gram implements WritableComparable, Writable
 {
-    private Gram three_gram;
+    private final Gram three_gram;
     private DoubleWritable value;
 
     public Custom3Gram(Gram three_gram, DoubleWritable value){
