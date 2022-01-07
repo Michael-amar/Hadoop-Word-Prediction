@@ -71,6 +71,8 @@ public class Step2
         job.setOutputKeyClass(Gram.class);
         job.setOutputValueClass(IntWritable.class);
 
+        job.setCombinerClass(Step2.ReducerClass.class);
+
         job.getConfiguration().set("mapreduce.output.basename", "Step2");
 
         FileInputFormat.addInputPath(job, new Path(args[0]));

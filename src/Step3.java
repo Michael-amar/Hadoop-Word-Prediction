@@ -26,6 +26,18 @@ public class Step3
         }
     }
 
+    public static class CombinerClass extends Reducer<CombinedKey, IntWritable, CombinedKey, IntWritable>
+    {
+        @Override
+        public void reduce(CombinedKey key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
+        {
+            int sum=0;
+            for(IntWritable value : values)
+                sum += value.get();
+            context.write(key,new IntWritable(sum));
+        }
+    }
+
     public static class ReducerClass extends Reducer<CombinedKey,IntWritable, Gram, DoubleWritable>
     {
         int C2 = 0;
@@ -62,6 +74,7 @@ public class Step3
         }
     }
 
+
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
@@ -81,6 +94,8 @@ public class Step3
         job.setReducerClass(Step3.ReducerClass.class);
         job.setOutputKeyClass(Gram.class);
         job.setOutputValueClass(DoubleWritable.class);
+
+        job.setCombinerClass(Step3.CombinerClass.class);
 
         // renaming output file
         job.getConfiguration().set("mapreduce.output.basename", "Step3");

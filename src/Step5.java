@@ -35,6 +35,18 @@ public class Step5
         }
     }
 
+    public static class CombinerClass extends Reducer<Gram, DoubleWritable, Gram, DoubleWritable>
+    {
+        @Override
+        public void reduce(Gram key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException
+        {
+            double sum=0;
+            for(DoubleWritable value : values)
+                sum += value.get();
+            context.write(key,new DoubleWritable(sum));
+        }
+    }
+
     public static class ReducerClass extends Reducer<Gram,DoubleWritable, Gram, DoubleWritable>
     {
 
@@ -78,6 +90,7 @@ public class Step5
         job.setOutputKeyClass(Gram.class);
         job.setOutputValueClass(DoubleWritable.class);
 
+        job.setCombinerClass(Step5.CombinerClass.class);
 
         // renaming output file
         job.getConfiguration().set("mapreduce.output.basename", "Step5");

@@ -73,6 +73,7 @@ public class Step1
         job.setOutputKeyClass(Gram.class);
         job.setOutputValueClass(IntWritable.class);
 
+        job.setCombinerClass(Step1.ReducerClass.class);
         // renaming output file
         job.getConfiguration().set("mapreduce.output.basename", "Step1");
         SequenceFileInputFormat.addInputPath(job, new Path(args[0]));
