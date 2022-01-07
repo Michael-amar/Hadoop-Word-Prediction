@@ -1,9 +1,6 @@
-import com.amazonaws.regions.Regions;
-import org.apache.hadoop.mapreduce.TestMapCollection.StepFactory;
 import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.model.InstanceType;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce;
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClientBuilder;
@@ -12,35 +9,70 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import org.apache.hadoop.mapreduce.TestMapCollection.StepFactory;
+
+
 
 public class Main {
 
     private static final Regions REGION = Regions.US_EAST_1;
-    private static final String OUTPUT = "output";
     private static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
     private static final String S3_BUCKET_URL = "S3://" + S3_BUCKET_NAME + "/";
+    private static final String OUTPUT_FOLDER_NAME = "output";
+    private static final String OUTPUT = S3_BUCKET_URL + OUTPUT_FOLDER_NAME;
     private static final String LOGS = S3_BUCKET_URL + "logs";
-    private static final String _3_GRAM_DATASET = S3_BUCKET_URL + "logs";
+    private static final String _3_GRAM_DATASET = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/3gram/data";
+    private static final String READ_ONLY_FILE_EXTENSION = "-r-00000";
     StepFactory stepFactory = new StepFactory();
 
     private static String jarOfStep(int stepNum) {
         return String.format("s3://%s/step%s.jar", S3_BUCKET_NAME, stepNum);
     }
 
+    private static String outputFolderForStep(int step) {
+        return S3_BUCKET_URL + "Step" + step;
+    }
+
+    private static String outputFolderName(int step) {
+        return outputFolderForStep(step) + "/Step" + step + READ_ONLY_FILE_EXTENSION;
+    }
+
+    /*
+Step1:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step1_jar/Hadoop-Word-Prediction.jar /hebrew-grams/3-grams /Step1
+
+Step2:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step2_jar/Hadoop-Word-Prediction.jar /Step1/Step1-r-00000 /Step2/
+
+Step3:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step3_jar/Hadoop-Word-Prediction.jar /Step1/Step1-r-00000 /Step3/
+
+Step4:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step4_jar/Hadoop-Word-Prediction.jar /Step1/Step1-r-00000 /Step4/
+
+Step5:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step5_jar/Hadoop-Word-Prediction.jar /Step3/Step3-r-00000 /Step4/Step4-r-00000 /Step5/
+
+Step6:
+hadoop jar /Users/michaelamar/Desktop/Hadoop-Word-Prediction/out/artifacts/Step6_jar/Hadoop-Word-Prediction.jar /Step5/Step5-r-00000 /Step6/
+ */
+
     private static StepConfig getStep(int step) {
         HadoopJarStepConfig hadoopJarStepConfig = new HadoopJarStepConfig().withJar(jarOfStep(step));
         switch (step) {
             case 1:
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(_3_GRAM_DATASET, outputFolderForStep(step));
+                break;
             case 2:
             case 3:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(_3_GRAM_DATASET, null);
-                break;
             case 4:
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(1), outputFolderForStep(step));
+                break;
             case 5:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs();
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(3), outputFolderName(4), outputFolderForStep(step));
                 break;
             case 6:
-                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(null, S3_BUCKET_URL + OUTPUT);
+                hadoopJarStepConfig = hadoopJarStepConfig.withArgs(outputFolderName(5), outputFolderForStep(step));
                 break;
         }
 
@@ -51,41 +83,40 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        AWSCredentialsProvider credentialsProvider = new EnvironmentVariableCredentialsProvider();
+        AWSCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
         AmazonS3 S3 = AmazonS3ClientBuilder.standard()
                 .withCredentials(credentialsProvider)
                 .withRegion(REGION)
                 .build();
-        ObjectListing filesInBucket = S3.listObjects(S3_BUCKET_NAME, OUTPUT);
+        ObjectListing filesInBucket = S3.listObjects(S3_BUCKET_NAME, OUTPUT_FOLDER_NAME);
         for (S3ObjectSummary s3ObjectSummary : filesInBucket.getObjectSummaries())
             S3.deleteObject(S3_BUCKET_NAME, s3ObjectSummary.getKey());
-
-        AmazonEC2 ec2 = AmazonEC2ClientBuilder.standard()
-                .withCredentials(credentialsProvider)
-                .withRegion(REGION)
-                .build();
 
         AmazonElasticMapReduce emr = AmazonElasticMapReduceClientBuilder.standard()
                 .withCredentials(credentialsProvider)
                 .withRegion(REGION)
                 .build();
 
-
         JobFlowInstancesConfig instances = new JobFlowInstancesConfig()
                 .withInstanceCount(2)
                 .withMasterInstanceType(InstanceType.M4Large.toString())
                 .withSlaveInstanceType(InstanceType.M4Large.toString())
-                .withHadoopVersion("2.6.0").withEc2KeyName("temp") //TODO
-                .withKeepJobFlowAliveWhenNoSteps(false)
-                .withPlacement(new PlacementType("us-east-1a"));
-
+                .withHadoopVersion("2.6.0")
+                .withEc2KeyName("hw2")
+                .withPlacement(new PlacementType("us-east-1a"))
+                .withKeepJobFlowAliveWhenNoSteps(false);
 
         RunJobFlowRequest runFlowRequest = new RunJobFlowRequest()
                 .withName("HW2")
                 .withInstances(instances)
                 .withSteps(getStep(1), getStep(2), getStep(3), getStep(4), getStep(5), getStep(6))
-                .withLogUri(LOGS);
+                .withLogUri(LOGS)
+                .withServiceRole("EMR_DefaultRole")
+                .withJobFlowRole("EMR_EC2_DefaultRole")
+                .withReleaseLabel("emr-5.11.0");
 
-        emr.runJobFlow(runFlowRequest);
+        RunJobFlowResult result = emr.runJobFlow(runFlowRequest);
+        String id = result.getJobFlowId();
+        System.out.println("our cluster id: "+id);
     }
 }
