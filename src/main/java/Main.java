@@ -13,7 +13,7 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 public class Main {
 
     private static final Regions REGION = Regions.US_EAST_1;
-    public static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
+    private static final String S3_BUCKET_NAME = "distributed-systems-assignment-2";
     private static final String S3_BUCKET_URL = "s3n://" + S3_BUCKET_NAME + "/";
     private static final String OUTPUT_FOLDER_NAME = "output";
     private static final String FINAL_OUTPUT_FOLDER = S3_BUCKET_URL + OUTPUT_FOLDER_NAME;
@@ -31,7 +31,7 @@ public class Main {
     }
 
     private static String outputFolderNameForStep(int step) {
-        return outputFolderForStep(step) + outputFolderForStep(step) + "-r-00000";
+        return outputFolderForStep(step) + outputFolderForStep(step) + READ_ONLY_FILE_EXTENSION;
     }
 
     /*
