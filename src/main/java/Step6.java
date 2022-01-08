@@ -37,10 +37,10 @@ public class Step6
         }
     }
 
-    public static class PartitionerClass extends Partitioner<Gram, DoubleWritable>
+    public static class PartitionerClass extends Partitioner<Custom3Gram, DoubleWritable>
     {
         @Override
-        public int getPartition(Gram key, DoubleWritable value, int numPartitions)
+        public int getPartition(Custom3Gram key, DoubleWritable value, int numPartitions)
         {
             return 1;
         }
