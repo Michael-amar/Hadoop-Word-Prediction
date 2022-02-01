@@ -1,3 +1,23 @@
+## Who are we?
+Andrey Palman 320686736
+
+Tom Sandalon 313173718
+
+Michael Amar 208383984
+
+
+
+
+# How to run
+
+Generate Jars for steps 1-6 or download them from **_s3://distributed-systems-assignment-2/_**
+
+Run the attached jar as follows:
+
+``` java -jar jarname.jar s3_bucket_name```
+
+Await output at ```s3://distributed-systems-assignment-2/output/```
+
 # Steps:
 
 ### Step1 counts 3-grams:
