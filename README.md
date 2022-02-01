@@ -96,14 +96,14 @@ And loads the 1-gram table into memory
 
 
 <u>Mapper Output</u>:
-< danny went * > 7
+< danny went > < * > 7
 < danny went > < danny went bowling > 7
-< danny went * > 9
+< danny went > < * > 9
 < danny went > < danny went home > 9
 
 
 <u>Reducer Input</u>:
-< danny went * > [7,9]
+< danny went > < * > [7,9]
 < danny went > < danny went bowling > 7
 < danny went > < danny went home > 9
 
