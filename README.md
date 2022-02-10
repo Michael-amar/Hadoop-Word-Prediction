@@ -1,12 +1,3 @@
-## Who are we?
-Andrey Palman 320686736
-
-Tom Sandalon 313173718
-
-Michael Amar 208383984
-
-
-
 
 # How to run
 
